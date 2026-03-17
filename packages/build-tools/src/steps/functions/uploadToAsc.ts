@@ -266,6 +266,17 @@ export function createUploadToAscBuildFunction(): BuildFunction {
         }
 
         if (state.state === 'FAILED') {
+          if (isSdkVersionIssueError(errors)) {
+            throw new UserError(
+              'EAS_UPLOAD_TO_ASC_SDK_VERSION_ISSUE',
+              'Build upload was rejected by App Store Connect because the IPA was built with an iOS SDK that is too old for current App Store Connect requirements. ' +
+                'In an Expo project, this usually means the build used an outdated EAS iOS image or the project still depends on an Expo SDK / native setup that does not support the required Xcode toolchain. ' +
+                'Upgrade to a supported Expo SDK if needed and/or select a newer iOS image in `eas.json`, rebuild, and submit again.',
+              {
+                docsUrl: 'https://docs.expo.dev/workflow/upgrading-expo-sdk-walkthrough/',
+              }
+            );
+          }
           if (isInvalidBundleIdentifierError(errors)) {
             const ipaInfoResult = await asyncResult(readIpaInfoAsync(ipaPath));
             const ipaBundleIdentifier = ipaInfoResult.ok
@@ -329,6 +340,10 @@ export function isClosedVersionTrainError(messages: { code: string }[]): boolean
     messages.length > 0 &&
     messages.every(message => ['90062', '90186', '90478'].includes(message.code))
   );
+}
+
+export function isSdkVersionIssueError(messages: { code: string }[]): boolean {
+  return messages.length > 0 && messages.every(message => message.code === '90725');
 }
 
 export function isInvalidBundleIdentifierError(messages: { code: string }[]): boolean {
