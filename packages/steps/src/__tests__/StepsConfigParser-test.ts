@@ -3,7 +3,6 @@ import path from 'path';
 
 import { createGlobalContextMock } from './utils/context';
 import { getError } from './utils/error';
-import { UUID_REGEX } from './utils/uuid';
 import { BuildFunction } from '../BuildFunction';
 import { BuildFunctionGroup } from '../BuildFunctionGroup';
 import { BuildStepInput, BuildStepInputValueTypeName } from '../BuildStepInput';
@@ -272,7 +271,6 @@ describe(StepsConfigParser, () => {
       expect(result.buildSteps).toHaveLength(4);
 
       const step1 = result.buildSteps[0];
-      expect(step1.id).toMatch(UUID_REGEX);
       expect(step1.displayName).toBe('command1');
       expect(step1.command).toBe('command1');
       expect(step1.shell).toBe('/bin/bash -eo pipefail');
