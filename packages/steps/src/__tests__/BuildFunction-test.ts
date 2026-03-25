@@ -87,7 +87,7 @@ describe(BuildFunction, () => {
       });
       expect(step).toBeInstanceOf(BuildStep);
       expect(step.id).toMatch(UUID_REGEX);
-      expect(step.name).toBe('Test function');
+      expect(step.displayName).toBe('Test function');
       expect(step.command).toBe('echo 123');
     });
     it('works with build step function', () => {
@@ -103,7 +103,7 @@ describe(BuildFunction, () => {
       });
       expect(step).toBeInstanceOf(BuildStep);
       expect(step.id).toMatch(UUID_REGEX);
-      expect(step.name).toBe('Test function');
+      expect(step.displayName).toBe('Test function');
       expect(step.fn).toBe(fn);
     });
     it('works with custom JS/TS function', () => {
@@ -118,8 +118,20 @@ describe(BuildFunction, () => {
       });
       expect(step).toBeInstanceOf(BuildStep);
       expect(step.id).toMatch(UUID_REGEX);
-      expect(step.name).toBe('Test function');
+      expect(step.displayName).toBe('Test function');
       expect(step.fn).toEqual(expect.any(Function));
+    });
+    it('uses the function id as the display name when the function name is not defined', () => {
+      const ctx = createGlobalContextMock();
+      const func = new BuildFunction({
+        namespace: 'eas',
+        id: 'test1',
+        command: 'echo 123',
+      });
+      const step = func.createBuildStepFromFunctionCall(ctx, {
+        workingDirectory: ctx.defaultWorkingDirectory,
+      });
+      expect(step.displayName).toBe('eas/test1');
     });
     it('can override id and shell from function definition', () => {
       const ctx = createGlobalContextMock();
@@ -138,6 +150,7 @@ describe(BuildFunction, () => {
       expect(func.shell).toBe('/bin/bash');
       expect(step.id).toBe('test2');
       expect(step.shell).toBe('/bin/zsh');
+      expect(step.displayName).toBe('Test function');
     });
     it('creates function inputs and outputs', () => {
       const ctx = createGlobalContextMock();
