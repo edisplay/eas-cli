@@ -14,8 +14,12 @@ import { eagerBundleAsync, shouldUseEagerBundle } from '../common/eagerBundle';
 import { prebuildAsync } from '../common/prebuild';
 import { setupAsync } from '../common/setup';
 import { Artifacts, BuildContext, SkipNativeBuildError } from '../context';
-import { cacheStatsAsync, restoreCcacheAsync } from '../steps/functions/restoreBuildCache';
-import { saveCcacheAsync } from '../steps/functions/saveBuildCache';
+import {
+  cacheStatsAsync,
+  restoreCcacheAsync,
+  restoreGradleCacheAsync,
+} from '../steps/functions/restoreBuildCache';
+import { saveCcacheAsync, saveGradleCacheAsync } from '../steps/functions/saveBuildCache';
 import {
   injectConfigureVersionGradleConfig,
   injectCredentialsGradleConfig,
@@ -78,6 +82,12 @@ async function buildAsync(ctx: BuildContext<Android.Job>): Promise<void> {
       logger: ctx.logger,
       workingDirectory,
       platform: ctx.job.platform,
+      env: ctx.env,
+      secrets: ctx.job.secrets,
+    });
+    await restoreGradleCacheAsync({
+      logger: ctx.logger,
+      workingDirectory,
       env: ctx.env,
       secrets: ctx.job.secrets,
     });
@@ -193,6 +203,12 @@ async function buildAsync(ctx: BuildContext<Android.Job>): Promise<void> {
       workingDirectory,
       platform: ctx.job.platform,
       evictUsedBefore,
+      env: ctx.env,
+      secrets: ctx.job.secrets,
+    });
+    await saveGradleCacheAsync({
+      logger: ctx.logger,
+      workingDirectory,
       env: ctx.env,
       secrets: ctx.job.secrets,
     });
