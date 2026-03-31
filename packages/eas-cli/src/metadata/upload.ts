@@ -69,7 +69,7 @@ export async function uploadMetadataAsync({
     version: config.getVersion()?.versionString,
   });
 
-  const taskCtx = { app };
+  const taskCtx = { app, projectDir };
 
   for (const task of tasks) {
     try {

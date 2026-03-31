@@ -77,7 +77,7 @@ export async function downloadMetadataAsync({
   const errors: Error[] = [];
   const config = createAppleWriter();
   const tasks = createAppleTasks();
-  const taskCtx = { app };
+  const taskCtx = { app, projectDir };
 
   for (const task of tasks) {
     try {
