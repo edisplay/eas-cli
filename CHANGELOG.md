@@ -15,6 +15,7 @@ This is the log of notable changes to EAS CLI and related packages.
 
 - [eas-cli] Fix workflow:logs for builds using built-in EAS build steps. ([#3523](https://github.com/expo/eas-cli/pull/3523) by [@douglowder](https://github.com/douglowder))
 - [build-tools][worker] Read Expo app config with `expo config` CLI invocation before falling back to `@expo/config` ([#3536](https://github.com/expo/eas-cli/pull/3536) by [@kitten](https://github.com/kitten))
+- Fix `hasIgnoredIosProjectAsync()` always returning `false` for ignored iOS projects. ([#3562](https://github.com/expo/eas-cli/pull/3562) by [@sjchmiela](https://github.com/sjchmiela))
 
 ### 🧹 Chores
 
