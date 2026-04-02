@@ -264,6 +264,12 @@ export const StaticWorkflowInterpolationContextZ = z.object({
       app: z.looseObject({
         id: z.string(),
       }),
+      build_upload: z
+        .looseObject({
+          id: z.string(),
+          state: z.enum(['awaiting_upload', 'processing', 'failed', 'complete']),
+        })
+        .optional(),
     })
     .optional(),
 });
