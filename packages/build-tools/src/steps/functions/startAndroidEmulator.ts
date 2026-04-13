@@ -1,5 +1,11 @@
+import { UserError } from '@expo/eas-build-job';
 import { asyncResult } from '@expo/results';
-import { BuildFunction, BuildStepInput, BuildStepInputValueTypeName } from '@expo/steps';
+import {
+  BuildFunction,
+  BuildRuntimePlatform,
+  BuildStepInput,
+  BuildStepInputValueTypeName,
+} from '@expo/steps';
 import spawn from '@expo/turtle-spawn';
 
 import {
@@ -44,6 +50,14 @@ export function createStartAndroidEmulatorBuildFunction(): BuildFunction {
       }),
     ],
     fn: async ({ logger }, { inputs, env }) => {
+      if (env.EAS_NO_EMULATOR_HOST_SUPPORT_CHECK !== '1') {
+        await assertAndroidEmulatorHostSupportAsync({ env });
+      } else {
+        logger.info(
+          'Skipping Android emulator host support check because $EAS_NO_EMULATOR_HOST_SUPPORT_CHECK is enabled.'
+        );
+      }
+
       try {
         const availableDevices = await AndroidEmulatorUtils.getAvailableDevicesAsync({ env });
         logger.info(`Available Android devices:\n- ${availableDevices.join(`\n- `)}`);
@@ -252,4 +266,33 @@ export function createStartAndroidEmulatorBuildFunction(): BuildFunction {
       }
     },
   });
+}
+
+async function assertAndroidEmulatorHostSupportAsync({
+  env,
+}: {
+  env: NodeJS.ProcessEnv;
+}): Promise<void> {
+  const isAndroidEmulatorHostSupported = await isAndroidEmulatorHostSupportedAsync(env);
+  if (!isAndroidEmulatorHostSupported) {
+    throw new UserError(
+      'ANDROID_EMULATOR_ACCEL_CHECK_UNAVAILABLE',
+      'Could not start the Android emulator on this runner.\n\n' +
+        'Android emulator requires nested virtualization on Linux. This job does not have the required virtualization support.\n\n' +
+        'Update your workflow YAML to use a nested-virtualization Linux runner, for example:\n' +
+        '  runs_on: linux-medium-nested-virtualization\n' +
+        '  runs_on: linux-large-nested-virtualization\n\n' +
+        'See https://docs.expo.dev/eas/workflows/syntax/#jobsjob_idruns_on for more information.'
+    );
+  }
+}
+
+async function isAndroidEmulatorHostSupportedAsync(env: NodeJS.ProcessEnv): Promise<boolean> {
+  const androidSdkPath = env.ANDROID_HOME ?? env.ANDROID_SDK_ROOT ?? '';
+  try {
+    await spawn(`${androidSdkPath}/emulator/emulator`, ['-accel-check'], { env });
+    return true;
+  } catch {
+    return false;
+  }
 }
