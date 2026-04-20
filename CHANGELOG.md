@@ -8,6 +8,9 @@ This is the log of notable changes to EAS CLI and related packages.
 
 ### 🎉 New features
 
+- [build-tools] Add `eas/deploy` function for EAS Hosting web deployments. ([#3598](https://github.com/expo/eas-cli/pull/3598) by [@gwdp](https://github.com/gwdp))
+- [build-tools] Add `eas/export` function for Expo web exports. ([#3598](https://github.com/expo/eas-cli/pull/3598) by [@gwdp](https://github.com/gwdp))
+
 ### 🐛 Bug fixes
 
 - [eas-cli] Fix `metadata:push` not deleting video previews from App Store Connect when removed from config. ([#3603](https://github.com/expo/eas-cli/pull/3603) by [@EvanBacon](https://github.com/EvanBacon))
