@@ -32,6 +32,7 @@ import {
   createRestoreBuildCacheFunction,
 } from './functions/restoreBuildCache';
 import { createRestoreCacheFunction } from './functions/restoreCache';
+import { parseXcactivitylogFunction } from './functions/parseXcactivitylog';
 import { runFastlaneFunction } from './functions/runFastlane';
 import { runGradleFunction } from './functions/runGradle';
 import { createSaveBuildCacheFunction } from './functions/saveBuildCache';
@@ -75,6 +76,7 @@ export function getEasFunctions(ctx: CustomBuildContext): BuildFunction[] {
     configureIosVersionFunction(),
     generateGymfileFromTemplateFunction(),
     runFastlaneFunction(),
+    parseXcactivitylogFunction(),
     createStartAndroidEmulatorBuildFunction(),
     createStartCuttlefishDeviceBuildFunction(),
     createStartIosSimulatorBuildFunction(),
