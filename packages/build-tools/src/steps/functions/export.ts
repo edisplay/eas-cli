@@ -69,7 +69,7 @@ export function createEasExportBuildFunction(): BuildFunction {
       const apiOnly = inputs.api_only.value as boolean | undefined;
       const platform = inputs.platform.value as string;
 
-      const packageManager = resolvePackageManager(stepsCtx.workingDirectory);
+      const packageManager = resolvePackageManager(stepsCtx.workingDirectory, { env });
       const exportCommand = getExportCommand({
         outputDir,
         dev,
