@@ -10,6 +10,9 @@ This is the log of notable changes to EAS CLI and related packages.
 
 - [build-tools] Add `eas/deploy` function for EAS Hosting web deployments. ([#3598](https://github.com/expo/eas-cli/pull/3598) by [@gwdp](https://github.com/gwdp))
 - [build-tools] Add `eas/export` function for Expo web exports. ([#3598](https://github.com/expo/eas-cli/pull/3598) by [@gwdp](https://github.com/gwdp))
+- [eas-cli] Add `eas update:insights <groupId>` command to display launch, crash, unique-user, and payload-size metrics for an update group. ([#3614](https://github.com/expo/eas-cli/pull/3614) by [@kadikraman](https://github.com/kadikraman))
+- [eas-cli] Add `--insights` flag to `eas update:view <groupId>` to append the same metrics below the existing output. ([#3614](https://github.com/expo/eas-cli/pull/3614) by [@kadikraman](https://github.com/kadikraman))
+- [eas-cli] Add `eas channel:insights --channel <name> --runtime-version <version>` command to display adoption and crash metrics for a channel + runtime version. ([#3614](https://github.com/expo/eas-cli/pull/3614) by [@kadikraman](https://github.com/kadikraman))
 
 ### 🐛 Bug fixes
 
