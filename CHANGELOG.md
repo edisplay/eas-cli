@@ -8,6 +8,14 @@ This is the log of notable changes to EAS CLI and related packages.
 
 ### 🎉 New features
 
+### 🐛 Bug fixes
+
+### 🧹 Chores
+
+## [18.8.0](https://github.com/expo/eas-cli/releases/tag/v18.8.0) - 2026-04-22
+
+### 🎉 New features
+
 - [eas-cli] Support custom params in `observe:events` results. ([#3620](https://github.com/expo/eas-cli/pull/3620) by [@douglowder](https://github.com/douglowder))
 - [build-tools] Add `eas/deploy` function for EAS Hosting web deployments. ([#3598](https://github.com/expo/eas-cli/pull/3598) by [@gwdp](https://github.com/gwdp))
 - [build-tools] Add `eas/export` function for Expo web exports. ([#3598](https://github.com/expo/eas-cli/pull/3598) by [@gwdp](https://github.com/gwdp))
@@ -22,8 +30,6 @@ This is the log of notable changes to EAS CLI and related packages.
 - [eas-cli] Delete all existing previews in a preview set before uploading to avoid Apple's "Too many app previews" error. ([#3603](https://github.com/expo/eas-cli/pull/3603) by [@EvanBacon](https://github.com/EvanBacon))
 - [eas-cli] Fixes for `observe` commands, including an issue for apps with many update IDs. ([#3609](https://github.com/expo/eas-cli/pull/3609) by [@douglowder](https://github.com/douglowder))
 - [eas-cli] Add existing capability identifiers. ([#3615](https://github.com/expo/eas-cli/pull/3615) by [@jakex7](https://github.com/jakex7))
-
-### 🧹 Chores
 
 ## [18.7.0](https://github.com/expo/eas-cli/releases/tag/v18.7.0) - 2026-04-14
 
