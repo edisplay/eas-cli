@@ -8,6 +8,8 @@ This is the log of notable changes to EAS CLI and related packages.
 
 ### 🎉 New features
 
+- [eas-cli] Add `eas integrations:asc` commands to manage App Store Connect integrations for EAS projects. ([#3558](https://github.com/expo/eas-cli/pull/3558) by [@sswrk](https://github.com/sswrk))
+
 ### 🐛 Bug fixes
 
 ### 🧹 Chores

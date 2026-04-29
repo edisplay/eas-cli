@@ -201,6 +201,9 @@
       "env": {
         "description": "manage project and account environment variables"
       },
+      "integrations": {
+        "description": "manage service connections"
+      },
       "metadata": {
         "description": "manage store configuration"
       },
