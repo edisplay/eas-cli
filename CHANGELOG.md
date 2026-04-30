@@ -8,14 +8,20 @@ This is the log of notable changes to EAS CLI and related packages.
 
 ### 🎉 New features
 
+### 🐛 Bug fixes
+
+### 🧹 Chores
+
+## [18.9.0](https://github.com/expo/eas-cli/releases/tag/v18.9.0) - 2026-04-30
+
+### 🎉 New features
+
 - [eas-cli] Add `eas integrations:asc` commands to manage App Store Connect integrations for EAS projects. ([#3558](https://github.com/expo/eas-cli/pull/3558) by [@sswrk](https://github.com/sswrk))
 - [eas-cli] Allow `eas build:download` to accept a build ID. ([#3655](https://github.com/expo/eas-cli/pull/3655) by [@douglowder](https://github.com/douglowder))
 
 ### 🐛 Bug fixes
 
 - [steps] Fix workflow job context interpolation when a string contains multiple `${{ }}` expressions on the same line (for example a changelog built from two context values). ([#3644](https://github.com/expo/eas-cli/pull/3644) by [@gwdp](https://github.com/gwdp))
-
-### 🧹 Chores
 
 ## [18.8.1](https://github.com/expo/eas-cli/releases/tag/v18.8.1) - 2026-04-23
 
