@@ -8,6 +8,14 @@ This is the log of notable changes to EAS CLI and related packages.
 
 ### 🎉 New features
 
+### 🐛 Bug fixes
+
+### 🧹 Chores
+
+## [18.10.0](https://github.com/expo/eas-cli/releases/tag/v18.10.0) - 2026-05-04
+
+### 🎉 New features
+
 - [eas-cli] Add `eas integrations:convex` commands to manage Convex integrations for EAS projects. ([#3575](https://github.com/expo/eas-cli/pull/3575) by [@fiberjw](https://github.com/fiberjw))
 
 ### 🐛 Bug fixes
@@ -15,8 +23,6 @@ This is the log of notable changes to EAS CLI and related packages.
 - [eas-cli] Create portable project archives on all platforms to normalize cross-platform tar metadata and permissions. ([#3234](https://github.com/expo/eas-cli/pull/3234) by [@sjchmiela](https://github.com/sjchmiela))
 - [eas-cli] Remove hardcoded `builderEnvironment.image` override in `eas build:resign`. ([#3661](https://github.com/expo/eas-cli/pull/3661) by [@hSATAC](https://github.com/hSATAC))
 - [eas-cli] Fix `eas update --json` intermittently failing with JSON parse errors during "Computing project fingerprints" by passing `silent: true` to `@expo/fingerprint` to suppress subprocess stdout pollution. ([#3659](https://github.com/expo/eas-cli/pull/3659) by [@Mookiies](https://github.com/Mookiies))
-
-### 🧹 Chores
 
 ## [18.9.1](https://github.com/expo/eas-cli/releases/tag/v18.9.1) - 2026-04-30
 
