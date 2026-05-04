@@ -4,7 +4,6 @@ import EasCommand from '../../commandUtils/EasCommand';
 import { EasCommandError } from '../../commandUtils/errors';
 import { EasNonInteractiveAndJsonFlags } from '../../commandUtils/flags';
 import { getLimitFlagWithCustomValues } from '../../commandUtils/pagination';
-import { AppObservePlatform, AppPlatform } from '../../graphql/generated';
 import Log from '../../log';
 import {
   EventsOrderPreset,
@@ -14,6 +13,12 @@ import {
 } from '../../observe/fetchEvents';
 import { METRIC_ALIASES, METRIC_SHORT_NAMES, resolveMetricName } from '../../observe/metricNames';
 import { buildObserveEventsJson, buildObserveEventsTable } from '../../observe/formatEvents';
+import {
+  allowedPlatformFlagValues,
+  appObservePlatformFromFlag,
+  appPlatformsFromFlag,
+} from '../../observe/platforms';
+import { resolveObserveCommandContextAsync } from '../../observe/resolveProjectContext';
 import { resolveTimeRange } from '../../observe/startAndEndTime';
 import { selectAsync } from '../../prompts';
 import { enableJsonOutput, printJsonOnlyOutput } from '../../utils/json';
@@ -41,7 +46,7 @@ export default class ObserveEvents extends EasCommand {
     })(),
     platform: Flags.option({
       description: 'Filter by platform',
-      options: Object.values(AppObservePlatform).map(s => s.toLowerCase()),
+      options: allowedPlatformFlagValues,
     })(),
     after: Flags.string({
       description:
@@ -88,22 +93,13 @@ export default class ObserveEvents extends EasCommand {
   async runAsync(): Promise<void> {
     const { flags, args } = await this.parse(ObserveEvents);
 
-    let projectId: string;
-    let graphqlClient;
-    if (flags['project-id']) {
-      projectId = flags['project-id'];
-      const ctx = await this.getContextAsync(
-        { contextDefinition: ObserveEvents.loggedInOnlyContextDefinition },
-        { nonInteractive: flags['non-interactive'] }
-      );
-      graphqlClient = ctx.loggedIn.graphqlClient;
-    } else {
-      const ctx = await this.getContextAsync(ObserveEvents, {
-        nonInteractive: flags['non-interactive'],
-      });
-      projectId = ctx.projectId;
-      graphqlClient = ctx.loggedIn.graphqlClient;
-    }
+    const { projectId, graphqlClient } = await resolveObserveCommandContextAsync({
+      command: this,
+      commandClass: ObserveEvents,
+      loggedInOnlyContextDefinition: ObserveEvents.loggedInOnlyContextDefinition,
+      projectIdOverride: flags['project-id'],
+      nonInteractive: flags['non-interactive'],
+    });
 
     if (flags.json) {
       enableJsonOutput();
@@ -130,15 +126,8 @@ export default class ObserveEvents extends EasCommand {
 
     const { daysBack, startTime, endTime } = resolveTimeRange(flags);
 
-    const platform = flags.platform
-      ? flags.platform === 'android'
-        ? AppObservePlatform.Android
-        : AppObservePlatform.Ios
-      : undefined;
-
-    const platforms: AppPlatform[] = platform
-      ? [platform === AppObservePlatform.Android ? AppPlatform.Android : AppPlatform.Ios]
-      : [AppPlatform.Android, AppPlatform.Ios];
+    const platform = appObservePlatformFromFlag(flags.platform);
+    const platforms = appPlatformsFromFlag(flags.platform);
 
     const [{ events, pageInfo }, totalEventCount] = await Promise.all([
       fetchObserveEventsAsync(graphqlClient, projectId, {

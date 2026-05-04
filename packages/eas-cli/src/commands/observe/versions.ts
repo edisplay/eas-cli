@@ -2,10 +2,11 @@ import { Flags } from '@oclif/core';
 
 import EasCommand from '../../commandUtils/EasCommand';
 import { EasNonInteractiveAndJsonFlags } from '../../commandUtils/flags';
-import { AppObservePlatform, AppPlatform } from '../../graphql/generated';
 import Log from '../../log';
 import { fetchObserveVersionsAsync } from '../../observe/fetchVersions';
 import { buildObserveVersionsJson, buildObserveVersionsTable } from '../../observe/formatVersions';
+import { allowedPlatformFlagValues, appPlatformsFromFlag } from '../../observe/platforms';
+import { resolveObserveCommandContextAsync } from '../../observe/resolveProjectContext';
 import { resolveTimeRange } from '../../observe/startAndEndTime';
 import { enableJsonOutput, printJsonOnlyOutput } from '../../utils/json';
 
@@ -16,7 +17,7 @@ export default class ObserveVersions extends EasCommand {
   static override flags = {
     platform: Flags.option({
       description: 'Filter by platform',
-      options: Object.values(AppObservePlatform).map(s => s.toLowerCase()),
+      options: allowedPlatformFlagValues,
     })(),
     start: Flags.string({
       description: 'Start of time range (ISO date)',
@@ -49,22 +50,13 @@ export default class ObserveVersions extends EasCommand {
   async runAsync(): Promise<void> {
     const { flags } = await this.parse(ObserveVersions);
 
-    let projectId: string;
-    let graphqlClient;
-    if (flags['project-id']) {
-      projectId = flags['project-id'];
-      const ctx = await this.getContextAsync(
-        { contextDefinition: ObserveVersions.loggedInOnlyContextDefinition },
-        { nonInteractive: flags['non-interactive'] }
-      );
-      graphqlClient = ctx.loggedIn.graphqlClient;
-    } else {
-      const ctx = await this.getContextAsync(ObserveVersions, {
-        nonInteractive: flags['non-interactive'],
-      });
-      projectId = ctx.projectId;
-      graphqlClient = ctx.loggedIn.graphqlClient;
-    }
+    const { projectId, graphqlClient } = await resolveObserveCommandContextAsync({
+      command: this,
+      commandClass: ObserveVersions,
+      loggedInOnlyContextDefinition: ObserveVersions.loggedInOnlyContextDefinition,
+      projectIdOverride: flags['project-id'],
+      nonInteractive: flags['non-interactive'],
+    });
 
     if (flags.json) {
       enableJsonOutput();
@@ -74,9 +66,7 @@ export default class ObserveVersions extends EasCommand {
 
     const { startTime, endTime } = resolveTimeRange(flags);
 
-    const platforms: AppPlatform[] = flags.platform
-      ? [flags.platform === 'android' ? AppPlatform.Android : AppPlatform.Ios]
-      : [AppPlatform.Android, AppPlatform.Ios];
+    const platforms = appPlatformsFromFlag(flags.platform);
 
     const results = await fetchObserveVersionsAsync(
       graphqlClient,

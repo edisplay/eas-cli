@@ -4,6 +4,9 @@ import { ExpoGraphqlClient } from '../../commandUtils/context/contextUtils/creat
 import { withErrorHandlingAsync } from '../client';
 import {
   AppObserveAppVersion,
+  AppObserveCustomEvent,
+  AppObserveCustomEventListFilter,
+  AppObserveCustomEventName,
   AppObserveEvent,
   AppObserveEventsFilter,
   AppObserveEventsOrderBy,
@@ -16,8 +19,9 @@ import {
 import { print } from 'graphql';
 import {
   AppObserveAppVersionFragmentNode,
-  AppObserveTimeSeriesFragmentNode,
+  AppObserveCustomEventFragmentNode,
   AppObserveEventFragmentNode,
+  AppObserveTimeSeriesFragmentNode,
 } from '../types/Observe';
 
 export type AppObserveTimeSeriesResult = {
@@ -81,6 +85,52 @@ type AppObserveEventsQueryVariables = {
   first?: number;
   after?: string;
   orderBy?: AppObserveEventsOrderBy;
+};
+
+type AppObserveCustomEventListQuery = {
+  app: {
+    byId: {
+      id: string;
+      observe: {
+        customEventList: {
+          pageInfo: PageInfo;
+          edges: Array<{
+            cursor: string;
+            node: AppObserveCustomEvent;
+          }>;
+        };
+      };
+    };
+  };
+};
+
+type AppObserveCustomEventListQueryVariables = {
+  appId: string;
+  filter?: AppObserveCustomEventListFilter;
+  first?: number;
+  after?: string;
+};
+
+type AppObserveCustomEventNamesQuery = {
+  app: {
+    byId: {
+      id: string;
+      observe: {
+        customEventNames: {
+          isTruncated: boolean;
+          names: AppObserveCustomEventName[];
+        };
+      };
+    };
+  };
+};
+
+type AppObserveCustomEventNamesQueryVariables = {
+  appId: string;
+  startTime: string;
+  endTime: string;
+  platform?: AppObservePlatform;
+  environment?: string;
 };
 
 export const ObserveQuery = {
@@ -235,5 +285,117 @@ export const ObserveQuery = {
       events: edges.map(edge => edge.node),
       pageInfo,
     };
+  },
+
+  async customEventListAsync(
+    graphqlClient: ExpoGraphqlClient,
+    variables: AppObserveCustomEventListQueryVariables
+  ): Promise<{ events: AppObserveCustomEvent[]; pageInfo: PageInfo }> {
+    const data = await withErrorHandlingAsync(
+      graphqlClient
+        .query<AppObserveCustomEventListQuery, AppObserveCustomEventListQueryVariables>(
+          gql`
+            query AppObserveCustomEventList(
+              $appId: String!
+              $filter: AppObserveCustomEventListFilter
+              $first: Int
+              $after: String
+            ) {
+              app {
+                byId(appId: $appId) {
+                  id
+                  observe {
+                    customEventList(filter: $filter, first: $first, after: $after) {
+                      pageInfo {
+                        hasNextPage
+                        hasPreviousPage
+                        endCursor
+                      }
+                      edges {
+                        cursor
+                        node {
+                          id
+                          ...AppObserveCustomEventFragment
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            ${print(AppObserveCustomEventFragmentNode)}
+          `,
+          variables
+        )
+        .toPromise()
+    );
+
+    const { edges, pageInfo } = data.app.byId.observe.customEventList;
+    return {
+      events: edges.map(edge => edge.node),
+      pageInfo,
+    };
+  },
+
+  async customEventNamesAsync(
+    graphqlClient: ExpoGraphqlClient,
+    {
+      appId,
+      startTime,
+      endTime,
+      platform,
+      environment,
+    }: {
+      appId: string;
+      startTime: string;
+      endTime: string;
+      platform?: AppObservePlatform;
+      environment?: string;
+    }
+  ): Promise<{ names: AppObserveCustomEventName[]; isTruncated: boolean }> {
+    const data = await withErrorHandlingAsync(
+      graphqlClient
+        .query<AppObserveCustomEventNamesQuery, AppObserveCustomEventNamesQueryVariables>(
+          gql`
+            query AppObserveCustomEventNames(
+              $appId: String!
+              $startTime: DateTime!
+              $endTime: DateTime!
+              $platform: AppObservePlatform
+              $environment: String
+            ) {
+              app {
+                byId(appId: $appId) {
+                  id
+                  observe {
+                    customEventNames(
+                      startTime: $startTime
+                      endTime: $endTime
+                      platform: $platform
+                      environment: $environment
+                    ) {
+                      isTruncated
+                      names {
+                        eventName
+                        count
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          `,
+          {
+            appId,
+            startTime,
+            endTime,
+            ...(platform && { platform }),
+            ...(environment && { environment }),
+          }
+        )
+        .toPromise()
+    );
+
+    return data.app.byId.observe.customEventNames;
   },
 };
