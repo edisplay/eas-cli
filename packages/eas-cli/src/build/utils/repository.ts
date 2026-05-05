@@ -150,6 +150,14 @@ export async function makeProjectTarballAsync(vcsClient: Client): Promise<LocalF
         prefix: 'project',
         gzip: true,
         portable: true,
+        onWriteEntry(entry) {
+          // Read-only directories may have files inside them. This causes trouble on tar extraction.
+          // Hence, we're forcing the owner write bit on directories in Windows
+          // to avoid this issue.
+          if (entry.type === 'Directory' && entry.stat) {
+            entry.stat.mode |= 0o200;
+          }
+        },
       },
       ['.']
     );

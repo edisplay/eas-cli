@@ -11,6 +11,7 @@ This is the log of notable changes to EAS CLI and related packages.
 ### 🐛 Bug fixes
 
 - [eas-cli] Fix Convex team invite output after skipped or unnecessary invitations. ([#3672](https://github.com/expo/eas-cli/pull/3672) by [@fiberjw](https://github.com/fiberjw))
+- Make directories marked as read-only writable when creating a tar, to prevent the cross-filesystem issues when extracting the tar. ([#3489](https://github.com/expo/eas-cli/pull/3489) by [@sswrk](https://github.com/sswrk))
 
 ### 🧹 Chores
 
