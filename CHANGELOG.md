@@ -8,14 +8,20 @@ This is the log of notable changes to EAS CLI and related packages.
 
 ### 🎉 New features
 
+### 🐛 Bug fixes
+
+### 🧹 Chores
+
+## [18.11.0](https://github.com/expo/eas-cli/releases/tag/v18.11.0) - 2026-05-05
+
+### 🎉 New features
+
 - [eas-cli] Add `--simulator` to `eas build:dev` and `eas build:run` to select which iOS simulator to install and run builds on. ([#3637](https://github.com/expo/eas-cli/pull/3637) by [@mmichels-brex](https://github.com/mmichels-brex))
 
 ### 🐛 Bug fixes
 
 - [eas-cli] Fix Convex team invite output after skipped or unnecessary invitations. ([#3672](https://github.com/expo/eas-cli/pull/3672) by [@fiberjw](https://github.com/fiberjw))
 - Make directories marked as read-only writable when creating a tar, to prevent the cross-filesystem issues when extracting the tar. ([#3489](https://github.com/expo/eas-cli/pull/3489) by [@sswrk](https://github.com/sswrk))
-
-### 🧹 Chores
 
 ## [18.10.0](https://github.com/expo/eas-cli/releases/tag/v18.10.0) - 2026-05-04
 
