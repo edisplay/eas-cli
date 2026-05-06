@@ -20,7 +20,7 @@ import {
   getCcachePath,
 } from '../../utils/cacheKey';
 import { GRADLE_CACHE_KEY_PREFIX, generateGradleCacheKeyAsync } from '../../utils/gradleCacheKey';
-import { TurtleFetchError } from '../../utils/turtleFetch';
+import { TurtleFetchError, turtleFetch } from '../../utils/turtleFetch';
 
 export function createRestoreBuildCacheFunction(): BuildFunction {
   return new BuildFunction({
@@ -277,9 +277,27 @@ export async function restoreGradleCacheAsync({
       logger,
     });
 
+    const hitType = matchedKey === cacheKey ? 'direct_hit' : 'prefix_match';
     logger.info(
-      `Gradle cache restored to ${gradleCachesPath} ${matchedKey === cacheKey ? '(direct hit)' : '(prefix match)'}`
+      `Gradle cache restored to ${gradleCachesPath} (${hitType === 'direct_hit' ? 'direct hit' : 'prefix match'})`
     );
+
+    try {
+      await turtleFetch(new URL('turtle-builds/logs', expoApiServerURL).toString(), 'POST', {
+        json: {
+          buildId: jobId,
+          message: `Gradle cache restored (${hitType})`,
+          tags: {
+            event: 'gradle_cache_restored',
+            cache_hit_type: hitType,
+          },
+        },
+        headers: {
+          Authorization: `Bearer ${robotAccessToken}`,
+        },
+        shouldThrowOnNotOk: false,
+      });
+    } catch {}
   } catch (err: unknown) {
     if (err instanceof TurtleFetchError && err.response?.status === 404) {
       logger.info('No Gradle cache found for this key');

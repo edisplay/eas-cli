@@ -354,15 +354,16 @@ export default class BuildService {
 
         try {
           await turtleFetch(
-            new URL('turtle-builds/error-logs', config.wwwApiV2BaseUrl).toString(),
+            new URL('turtle-builds/logs', config.wwwApiV2BaseUrl).toString(),
             'POST',
             {
               json: {
                 buildId: this.buildId,
                 message: rawErrorMessage,
-                buildPhase: err.buildPhase ?? null,
-                errorCode: err.errorCode,
+                level: 'error',
                 tags: {
+                  build_phase: err.buildPhase ?? null,
+                  error_code: err.errorCode,
                   platform: job.platform,
                   workflow: job.type,
                   sdk_version: metadata?.sdkVersion ?? null,
